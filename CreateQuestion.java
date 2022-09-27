@@ -15,6 +15,9 @@ public class CreateQuestion {
         if((int) (Math.random() * 2)==1&&a!=1){//判断有无括号,0为无，1为有//有时则随机在某个位置插入括号//只有一个运算符时括号没意义排除a==1
             place=(int) (Math.random()*a +1);//括号的位置取值范围是1到a
         }
+        while(c==0){
+            c=(int) (Math.random()*r);
+        }
         number[j] = valueOf(c);
         String str;
         first = c;
@@ -31,7 +34,10 @@ public class CreateQuestion {
                     str=str.concat(String.valueOf(first));
                 }
                 else{
-                str = String.valueOf(first);}
+                str = String.valueOf(first);
+                }
+                str = str.concat("/");
+                str = str.concat(valueOf(c));
             } else {
                 if(place==1){
                     symbol[k++]='(';
@@ -41,11 +47,14 @@ public class CreateQuestion {
                 else{
                 str = String.valueOf(first / c);
                 }
-                str=str.concat("'");
-                str=str.concat(String.valueOf(first%c));
+                if(first%c!=0){
+                    str=str.concat("'");
+                    str=str.concat(String.valueOf(first%c));
+                    str = str.concat("/");
+                    str = str.concat(valueOf(c));
+                }
             }
-            str = str.concat("/");
-            str = str.concat(valueOf(c));
+
         } else {
             if(place==1){
                 str="(";
@@ -89,7 +98,10 @@ public class CreateQuestion {
                 first=c;
             } else {
 //                str = str.concat(valueOf(c = (int) (Math.random() * r)));
-                first=(int)(Math.random()*r);//先不赋值，转换真分数
+                while((first=(int)(Math.random()*r))==0){
+                    first=(int)(Math.random()*r);//先不赋值，转换真分数
+                }
+
             }
             number[j] = valueOf(first);
             if (((int) (Math.random() * 2) == 0)) {//随机选择是不是分数，0为分数
@@ -108,13 +120,18 @@ public class CreateQuestion {
                 number[j]=number[j].concat(valueOf(c));
                 if(first<c){//小于就直接储存
                     str=str.concat(String.valueOf(first));
+                    str=str.concat("/");
+                    str=str.concat(valueOf(c));
                 }else{
                     str=str.concat(String.valueOf(first/c));
-                    str=str.concat("'");
-                    str=str.concat(String.valueOf(first%c));
+                    if(first%c!=0){
+                        str=str.concat("'");
+                        str=str.concat(String.valueOf(first%c));
+                        str=str.concat("/");
+                        str=str.concat(valueOf(c));
+                    }
                 }
-                str=str.concat("/");
-                str=str.concat(valueOf(c));
+
             }else{//不为分数时
                 str=str.concat(String.valueOf(first));
             }
@@ -128,7 +145,9 @@ public class CreateQuestion {
         if(!CheckQuestion.check(number,symbol)){
             return CreateQuestion.create(r,num);
         }
-        CheckQuestion.check(number,symbol);
+        if((CalculateOne.cal(number,symbol))==null){
+            return CreateQuestion.create(r,num);
+        }
         Test.QuestionNumber.add(number);
         Test.QuestionSymbol.add(symbol);
         str = str.concat(" = ");

@@ -1,14 +1,14 @@
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class Test {
     public static int n;
     public static int  r;
-    public static List<String> QuestionArray=new ArrayList<>();//储存输出数据
+    public static List<String> QuestionArray=new ArrayList<>();//储存题目输出数据
+    public static List<String> AnswerArray=new ArrayList<>();//储存答案输出数据
     public static List<String []> QuestionNumber=new ArrayList<>();//传输数值用于计算
     public static List<char []> QuestionSymbol=new ArrayList<>();//传输运算符
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         //-n 10 -r 10根据参数生成相应题目的数目和范围
         //随机生成运算式子
         //判断是否重复
@@ -30,10 +30,9 @@ public class Test {
             //利用Question查重，如果不重复，保存到QuestionArray
             QuestionArray.add(str);
         }
-        //计算并返回计算过程中会出现负数的序列号
-        //删除返回的元素在QuestionArray中
+
         //将QuestionArray输出到Exercises.txt
-        QuestionToFile.output(QuestionArray);
+        DataToFile.output(QuestionArray,"Exercises.Txt");
         for (String[] strings :QuestionNumber){
             for(String str:strings){
                 System.out.print(str+" ");
@@ -46,10 +45,10 @@ public class Test {
             }
             System.out.println();
         }
-        // 将结果输出到Answer.txt
         CalcAll calcAll=new CalcAll();
         calcAll.calcAll(QuestionNumber,QuestionSymbol);
-
+        // 将结果输出到Answer.txt
+        DataToFile.output(AnswerArray,"Answer.txt");
 
 //        单独测试CheckQuestion
 //        QuestionArray.add("1+2+3");

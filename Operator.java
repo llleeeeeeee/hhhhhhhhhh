@@ -34,6 +34,7 @@ public class Operator {
     }
     public void getFraction(String str){
         //将字符串转化为分数，分子分母存在list中
+        list.clear();
         if(str == null) return ;
         if(str.contains("/")){
             String[] split = str.split("/");
@@ -93,7 +94,7 @@ public class Operator {
     public String[] strNum;
     public String[] strOperator;
     //计算
-    public String calc(List<String> listNum,List<String> listOperator){
+    public String calc(List<String> listNum,List<String> listOperator) {
         //传入运算数和运算符进行分析计算
         //创建字符串数组方便索引所需运算符和运算数
         strNum = new String[listNum.size()];
@@ -110,51 +111,61 @@ public class Operator {
                     case "+":
                         listNum.set(j, add(strNum[j],strNum[j+1]));break;
                     case "-":
-                        listNum.set(j, sub(strNum[j],strNum[j+1]));break;
+                        result = sub(strNum[j],strNum[j+1]);
+                        if(result!=null){
+                            listNum.set(j, sub(strNum[j],strNum[j+1]));
+                            break;
+                        }else {
+                            return null;
+                        }
                     case "*":
                         listNum.set(j, multi(strNum[j],strNum[j+1]));break;
                     case "/":
                         listNum.set(j, division(strNum[j],strNum[j+1]));break;
                 }
                 delInitString(j+1,j+1,j,listNum,listOperator);
-            }else {
-                //若含有乘法除法，则优先计算
-                if(listOperator.contains("*")){
-                    int j = listOperator.indexOf("*");//找出乘法运算符的位置
-                    if(strOperator[j].equals("*")){
-                        listNum.set(j, multi(strNum[j],strNum[j+1]));
-                    }
-                    delInitString(j+1,j,0,listNum,listOperator);
-                }else if(listOperator.contains("/")){
-                    int j = listOperator.indexOf("/");//找出除法运算符的位置
-                    if(strOperator[j].equals("/")){
-                        listNum.set(j, division(strNum[j],strNum[j+1]));
-                    }
-                    delInitString(j+1,j,0,listNum,listOperator);
+            }
+            //若含有乘法除法，则优先计算
+            for (int j = 0; j < listOperator.size(); j++) {
+                if(listOperator.get(j).equals("*")){
+                    listNum.set(j, multi(strNum[j],strNum[j+1]));
+                    delInitString(j+1,j,-1,listNum,listOperator);
+                }else if(listOperator.get(j).equals("/")){
+                    listNum.set(j, division(strNum[j],strNum[j+1]));
+                    delInitString(j+1,j,-1,listNum,listOperator);
                 }
-                if(strOperator[i]!=null){
+            }
+
+                if(strOperator.length>0 && strNum.length!=1){
                     switch (strOperator[i]){
                         case "+":
                             listNum.set(i, add(strNum[i],strNum[i+1]));
-                            delInitString(i+1,i,0,listNum,listOperator);
+                            delInitString(i+1,i,-1,listNum,listOperator);
                             break;
                         case "-":
-                            listNum.set(i, sub(strNum[i],strNum[i+1]));
-                            delInitString(i+1,i,0,listNum,listOperator);
-                            break;
+                            result = sub(strNum[i],strNum[i+1]);
+                            if(result!=null){
+                                listNum.set(i, sub(strNum[i],strNum[i+1]));
+                                delInitString(i+1,i,-1,listNum,listOperator);
+                                break;
+                            }else {
+                                return null;
+                            }
                     }
+                }else {
+                    break;
                 }
-            }
+
         }
         result = listNum.get(listNum.size()-1);
-        simplification(result);//化简
+        result =  simplification(result);//化简
         return result;
     }
     public void delInitString(int j,int k,int l,List<String> list1,List<String> list2){
         list1.remove(j);//移除运算数
         list2.remove(k);//移除运算符
-        if(l != 0){
-            //若l不为0,则需额外移除括号"(",")"
+        if(l != -1){
+            //若l不为-1,则需额外移除括号"(",")"
             list2.remove(l+1);
             list2.remove(l);
         }
@@ -162,23 +173,37 @@ public class Operator {
         strOperator = list2.toArray(new String[0]);
     }
     //化简真分数
-    public void simplification(String num){
+    public String simplification(String num){
         getFraction(num);
         int top;//分子
         int bottom;//分母
         int inter = 0;//若为带分数，则其inter为整数部分
         top = list.get(0);
         bottom = list.get(1);
+        //约分化简
+        int i;
+        if(top == 0 )return null;
+        for (i = top; ; i--) {
+            if(top % i == 0 && bottom % i == 0){
+                break;
+            }
+        }
+        top = top/i;
+        bottom = bottom/i;
         if(top > bottom){
             //若分子大于分母则转化为带分数
             inter = top / bottom;
             top = top - inter * bottom;
+            if(top==0){
+                result =String.valueOf(top);
+                return result;
+            }
         }
         if(inter == 0){
             result = top + "/" + bottom;
         }else {
             result = inter +"`"+ top +"/"+ bottom;
         }
-        System.out.println(result);
+        return result;
     }
 }
