@@ -41,8 +41,12 @@ public class Operator {
             for (String s : split) {
                 list.add(Integer.parseInt(s));//分子、分母加入list中
             }
-        }else {
-            //不是分数字符串情况下
+        }else if(str.contains("0")){
+            //数字0时的情况
+            list.add(0);
+            list.add(0);
+        }else{
+            //不是分数字符串情况下,又不为0的情况
             list.add(Integer.parseInt(str));//分子加入list中
             list.add(1);//分母为1
         }
@@ -180,9 +184,16 @@ public class Operator {
         int inter = 0;//若为带分数，则其inter为整数部分
         top = list.get(0);
         bottom = list.get(1);
+        if(bottom == 0 && top != 0){
+            //分子不为0，分母为0，返回空值
+            return null;
+        }else if(top == 0){
+            //分子分母都为0，返回0
+            return "0";
+        }
         //约分化简
         int i;
-        if(top == 0 )return null;
+        if(top < 0 )return null;
         for (i = top; ; i--) {
             if(top % i == 0 && bottom % i == 0){
                 break;
@@ -190,7 +201,7 @@ public class Operator {
         }
         top = top/i;
         bottom = bottom/i;
-        if(top > bottom){
+        if(top > bottom && bottom != 1){
             //若分子大于分母则转化为带分数
             inter = top / bottom;
             top = top - inter * bottom;
@@ -200,6 +211,15 @@ public class Operator {
             }
         }
         if(inter == 0){
+            if(top == bottom){
+                //若分子分母相等，则值为1
+                result = "1";
+                return result;
+            }else if(bottom == 1){
+                //如果化简分母为1，则输出整数
+                result = String.valueOf(top);
+                return result;
+            }
             result = top + "/" + bottom;
         }else {
             result = inter +"`"+ top +"/"+ bottom;
