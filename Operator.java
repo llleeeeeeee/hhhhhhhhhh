@@ -222,7 +222,7 @@ public class Operator {
             }
             result = top + "/" + bottom;
         }else {
-            result = inter +"`"+ top +"/"+ bottom;
+            result = inter +"'"+ top +"/"+ bottom;
         }
         return result;
     }

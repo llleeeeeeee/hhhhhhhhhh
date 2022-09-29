@@ -1,5 +1,8 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+
+import static java.lang.String.valueOf;
 
 public class Test {
     public static int n;
@@ -33,23 +36,44 @@ public class Test {
 
         //将QuestionArray输出到Exercises.txt
         DataToFile.output(QuestionArray,"Exercises.Txt");
-        for (String[] strings :QuestionNumber){
-            for(String str:strings){
-                System.out.print(str+" ");
-            }
-            System.out.println();
-        }
-        for (char[] chars :QuestionSymbol){
-            for(char ch:chars){
-                System.out.print(ch+"  ");
-            }
-            System.out.println();
-        }
+//        for (String[] strings :QuestionNumber){
+//            for(String str:strings){
+//                System.out.print(str+" ");
+//            }
+//            System.out.println();
+//        }
+//        for (char[] chars :QuestionSymbol){
+//            for(char ch:chars){
+//                System.out.print(ch+"  ");
+//            }
+//            System.out.println();
+//        }
         CalcAll calcAll=new CalcAll();
         calcAll.calcAll(QuestionNumber,QuestionSymbol);
         // 将结果输出到Answer.txt
         DataToFile.output(AnswerArray,"Answer.txt");
-
+        int no=0;
+        float right=0;
+        String str,str1="错题为";
+        Scanner scanner=new Scanner(System.in);
+        while(no<n){
+            if(no==0){
+                System.out.println("输入##终止答题");
+            }
+            System.out.println("请输入第"+(no+1)+"题的答案");
+            str=scanner.next();
+            if(AnswerArray.get(no).equals(str)){
+                right++;
+            }else{
+                str1=str1.concat(valueOf(no+1)+",");
+            }
+            if(str.equals("##")){
+                break;
+            }
+            no++;
+        }
+        System.out.println("正确率为："+(right/n));
+        System.out.println(str1);
 //        单独测试CheckQuestion
 //        QuestionArray.add("1+2+3");
 //        String[] str1={"1","2","3"};
